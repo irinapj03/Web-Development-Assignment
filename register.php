@@ -4,17 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-</head>
-<script>
-    var password = document.getElementsByClassName("password").value;
-    var confirm_pass = document.getElementsByClassName("conf").value;
 
-    if (password!= confirm_pass) {
-        alert(Passwords do not match!);
-        return false;
-    }
-    return true;
-</script>
+    <script>
+        function checkPassword(form) {
+            var password = form.password.value;
+            var confirm_pass = form.confpassword.value;
+
+            if (password != confirm_pass) {
+                alert("Passwords do not match!")
+                return false;
+            }
+            else {
+                alert("Registration successful!")
+                return true;
+            }   
+        }
+        </script>
+
+</head>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
     body {
@@ -32,7 +39,7 @@ input[type=text] {
     border: none;
     height: 20px;
     position: relative;
-    left: 110px;
+    left: 75px;
     text-indent: 10px;
 }
 
@@ -134,16 +141,35 @@ textarea {
     text-indent: 10px;
 }
 
+select {
+    margin-left: 120px;
+    width: 300px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    font-family: inherit;
+    text-indent: 10px;
+
+}
+
+option {
+    margin-left: 120px;
+    width: 300px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    font-family: inherit;
+    text-indent: 10px;
+}
+
 </style>
 
 <body>
-    <img src="PetLovers Logo.png">
+    <img src="PetLovers.png">
     <div class="form-center">
         <h1>Register</h1>
-        <form method="post" action="server.php">
+        <form method="post" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
             <div id="box">
                 <div>
-                    <label>Name:</label>
+                    <label>Username:</label>
                     <input type="text" placeholder="Enter username" name="username" required><br><br>
                 </div>
                 <div>
@@ -168,15 +194,45 @@ textarea {
                 </div>
                 <div>
                     <label>Confirm Password:</label>
-                    <input class="conf" type="password" placeholder="Confirm pasword" name="conf-password" required><br><br>
+                    <input class="conf" type="password" placeholder="Confirm pasword" name="confpassword" required><br><br>
                 </div>
-                </div>
+                <!--div>
+                    <label>Role:</label>
+                    <select name="role">
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div><br-->
                 <div>
-                    <button value="submit">Login</button>
+                    <button value="submit" name="submitBtn">Register</button>
                     <button value="reset">Reset</button>
                 </div>
             </div>
         </form>
     </div>
+    <?php
+        include("conn.php");
+
+        if(isset($_POST['submitBtn'])) {
+            $user_name = $_POST['username'];
+            $user_email= $_POST['email'];
+            $user_phone= $_POST['phone'];
+            $user_address= $_POST['address'];
+            $user_dob= $_POST['dob'];
+            $user_password= $_POST['password'];
+
+            $sql = "INSERT INTO users (user_name, user_email, user_phone, user_address, user_dob, user_password, user_role) VALUES ('$user_name','$user_email','$user_phone', '$user_address', '$user_dob', '$user_password', 'user')";
+            
+            $stmt = mysqli_prepare($con,$sql);
+            mysqli_stmt_execute($stmt);
+            $check = mysqli_stmt_affected_rows($stmt);
+            
+            if($check == 1) {
+            echo '<script>alert("Successfully registered!");window.location.href="login.php";</script>'; 
+            }
+
+        }
+    ?>
 </body>
 </html>
